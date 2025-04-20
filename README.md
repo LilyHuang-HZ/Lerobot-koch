@@ -1,6 +1,6 @@
-# 📚 LeRobot-Koch文档导航
+## 📚 LeRobot-Koch 复现文档导航
 
-# 📄 [Lerobot ACT 训练](lerobot-koch-ACT.md)
+## 📄 [Lerobot ACT 训练](lerobot-koch-ACT.md)
 
 - [Lerobt安装后数据及介绍](lerobot-koch-ACT.md#lerobt安装后数据及介绍)
 - [机械臂硬件介绍](lerobot-koch-ACT.md#机械臂硬件介绍)
@@ -11,8 +11,15 @@
 - [ACT训练和推理完整流程](lerobot-koch-ACT.md#act训练和推理完整流程)
 - [ACT原理算法流程介绍](lerobot-koch-ACT.md#act原理算法流程介绍)
 
+<video src="assets/112-1744989687_Y5x9NFyP.mp4" height="560" controls></video>
 
-# 📄 [Lerobot Diffusion Policy 训练](lerobot-koch-DP.md)
+## 📄 [Diffusion Policy 训练](lerobot-koch-DP.md)
 
 
-# 📄 [Lerobot Pi算法 训练](lerobot-koch-Pi.md)
+
+
+
+
+
+
+## 📄 [Lerobot Pi算法 训练](lerobot-koch-Pi.md)

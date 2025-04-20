@@ -1019,7 +1019,7 @@
 
   推理结果的视频演示：
 
-  <video src="assets/112_1744989687 -cutter.mp4" height="560" controls></video>
+  <video src="assets/112-1744989687_Y5x9NFyP.mp4" height="560" controls></video>
 
 - 实时推理(Inference)过程评估
 

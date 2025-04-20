@@ -15,7 +15,7 @@ def extract_headers(md_path):
 md_files = [f for f in Path(".").glob("*.md") if f.name.lower() != "readme.md"]
 
 readme_lines = [
-    "# 📚 LeRobot 文档导航\n",
+    "# 📚 LeRobot-Koch 文档导航\n",
     "以下是自动从 markdown 文件中提取的标题目录。\n"
 ]
 
