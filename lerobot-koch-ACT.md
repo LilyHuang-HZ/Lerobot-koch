@@ -1017,9 +1017,9 @@
   -p outputs/train/koch_clip_clay_bowl/checkpoints/last/pretrained_model
   ```
 
-  推理结果的视频演示：
+  📺 **项目结果演示视频**
 
-  <video src="assets/112-1744989687_Y5x9NFyP.mp4" height="560" controls></video>
+  [![Watch the video](assets/demo-thumbnail.jpg)](https://www.youtube.com/watch?v=390EQSu6ihM)
 
 - 实时推理(Inference)过程评估
 

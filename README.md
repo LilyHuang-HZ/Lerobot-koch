@@ -11,7 +11,9 @@
 - [ACT训练和推理完整流程](lerobot-koch-ACT.md#act训练和推理完整流程)
 - [ACT原理算法流程介绍](lerobot-koch-ACT.md#act原理算法流程介绍)
 
-<video src="assets/112-1744989687_Y5x9NFyP.mp4" height="560" controls></video>
+### 📺 项目结果演示视频
+
+[![Watch the video](assets/demo-thumbnail.jpg)](https://www.youtube.com/watch?v=390EQSu6ihM)
 
 ## 📄 [Diffusion Policy 训练](lerobot-koch-DP.md)
 
