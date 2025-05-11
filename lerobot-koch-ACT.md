@@ -1,9 +1,5 @@
 ## Lerobt安装后数据及介绍
 
-选择已经装好的机械臂[WowRobo](https://wowrobo.com/tutorial)，Dynamixel舵机，双臂套餐4398元，机械臂是安装好的，从机械臂的主控板和舵机1需要自己插入TTL连接线，以及底座的螺丝安装，主机械臂是安装好的。
-
-也可以选择自己组装机械臂，可以看[哔哩哔哩相关教程](不到一千七百元，搭出自己的lerobot-aloha真实机械臂材料清单)，两个机械臂总共2000元不到；
-
 1. Lerobot安装（[官网数据介绍](https://github.com/huggingface/lerobot)）
 
    ```bash
@@ -117,7 +113,7 @@
   | `next.done`                   | 这一帧是否是 episode 的最后一帧    | bool                   |
   | `index`                       | 在整个数据集中的全局索引           | int64                  |
 
-2. 本项目复现安装，[代码下载]()
+2. 本项目复现安装：
 
    ```bash
    cd lerobot
@@ -176,33 +172,6 @@
   - **小关节使用空心杯电机**：重量轻，惯量小，适合高速运动（比如手指、手腕）
   - **大关节使用舵机或伺服电机+减速器**：需要扭矩大，结构稳
 
-- 微雪 串口总线舵机驱动板模块
-
-  - 它主要完成这几项功能：
-
-    | 功能类别   | 作用说明                                                     |
-    | ---------- | ------------------------------------------------------------ |
-    | 协议转换   | 把电脑或控制器发出的串口指令（比如 USB 或 TTL）**转换成舵机能理解的控制协议**（比如 FEETECH 协议、Dynamixel 协议等） |
-    | 接口适配   | 电脑是 USB，舵机是串口；树莓派是 TTL，舵机是半双工串口…它能完成**各种接口电平转换、半/全双工转换** |
-    | 电源管理   | 给舵机**统一供电**，有时候还能保护舵机不被烧毁（限压、过流保护） |
-    | 多舵机通信 | 支持多个舵机串联，**轮询通信、分发控制指令、采集反馈数据**   |
-
-  - 所以在人形机器人（humanoid robot）中，驱动板也绝对是标配！ 人形机器人有很多舵机（腿、胳膊、头部）
-
-    - 每个舵机控制一个关节（例如膝关节、肩关节等）
-    - 全部舵机通过驱动板串起来
-    - 控制器（比如 Jetson、树莓派）发指令给驱动板
-    - 驱动板将指令转换为串口命令，发给每个舵机
-    - 舵机内部的编码器实时反馈状态 → 经过驱动板回传给上位机
-
-  - 整体流程
-
-    | 概念             | 解释                                                         |
-    | ---------------- | ------------------------------------------------------------ |
-    | 上位机（Host）   | 通常就是你的**电脑、Jetson、树莓派、STM32主控板**，发指令、接收反馈 |
-    | 驱动板（中间桥） | 转换信号、分发控制、采集反馈                                 |
-    | 舵机（执行器）   | 接收角度/速度指令，执行动作并用编码器反馈状态                |
-
 - 硬件的连接：
 
   - **舵机0**
@@ -250,74 +219,48 @@
 
   ![image-20250418173529495](assets/image-20250418173529495.png)
 
-2. 统一USB接口（针对linux系统，MacOS系统接口不变，不需要绑定，只需要在koch.yaml中配置相应端口即可）
+2. 统一USB接口
 
-- USB 设备的端口号可能会根据设备插入的物理端口位置不同而发生变化。这是因为 Linux 系统会根据设备的插入顺序或 USB 端口来分配 `/dev/ttyACM*` 或 `/dev/ttyUSB*` 等设备文件的名称。所以每次机械臂插拔时，系统可能会分配不同的端口号，比如 `ttyACM0`、`ttyACM1` ，所以需要固定主从机械臂的usb端口，方便后续程序，下面把主从机械臂的USB设备端口固定到：
+- MacOS系统：机械臂自动识别器序列号，插板后不会改变，摄像头最后一个序号是内置摄像头，其余为新增摄像头，也不会变，在`/lerobot/configs/robot/koch.yaml`进行机械臂port的配置就好。
 
-  ```
-  /dev/ttyACM10 #主机械臂
-  /dev/ttyACM11 #从机械臂 
-  ```
-
-- **查找设备信息**，通过插拔主从机械臂的usb口，按照这个`ls /dev/ttyACM*`返回值的差异找到其对应的机械臂USB端口；
-
-  ```
-  (base) lily@lilyhuang:~/code/xbot/lerobot$ ls /dev/ttyACM*
-  /dev/ttyACM0  /dev/ttyACM1  /dev/ttyACM2  /dev/ttyACM3
-  ```
-
-- 查找出的对应关系（不同安装位置，其结果不同）
-  主机械臂：`/dev/ttyACM1`
-
-  从机械臂：`/dev/ttyACM2`
-
-- 运行`udevadm info -a -n /dev/ttyACM1`和`udevadm info -a -n /dev/ttyACM2`分别查找如下字段：
-
-  ATTRS{idVendor}（设备供应商ID）
-
-  ATTRS{idProduct}（设备产品ID）
-
-  ATTRS{serial}（设备序列号 ，用于区分同型号设备）字段
-
-- **创建udev规则文件**：
-
-  ```bash
-  sudo gedit /etc/udev/rules.d/99-usb-serial.rules
-  ```
-
-- 在文件中添加以下内容：
-
-  ```
-  # 主臂设备绑定到 ttyACM10 
-  SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d3", ATTRS{serial}=="5970072559", SYMLINK+="ttyACM10"
+  ```json
+  leader_arms: dict[str, MotorsBusConfig] = field(
+          default_factory=lambda: {
+              "main": DynamixelMotorsBusConfig(
+                  port="/dev/tty.usbmodem59700725591", # 配置主机械臂port
+                  motors={
+                      # name: (index, model)
+                      "shoulder_pan": [1, "xl330-m077"],
+                      "shoulder_lift": [2, "xl330-m077"],
+                      "elbow_flex": [3, "xl330-m077"],
+                      "wrist_flex": [4, "xl330-m077"],
+                      "wrist_roll": [5, "xl330-m077"],
+                      "gripper": [6, "xl330-m077"],
+                  },
+              ),
+          }
+      )
   
-  # 从臂绑定到 ttyACM11
-  SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d3", ATTRS{serial}=="5970072755", SYMLINK+="ttyACM11"
+      follower_arms: dict[str, MotorsBusConfig] = field(
+          default_factory=lambda: {
+              "main": DynamixelMotorsBusConfig(
+                  port="/dev/tty.usbmodem59700727551", # 配置从机械臂port
+                  motors={
+                      # name: (index, model)
+                      "shoulder_pan": [1, "xl430-w250"],
+                      "shoulder_lift": [2, "xl430-w250"],
+                      "elbow_flex": [3, "xl330-m288"],
+                      "wrist_flex": [4, "xl330-m288"],
+                      "wrist_roll": [5, "xl330-m288"],
+                      "gripper": [6, "xl330-m288"],
+                  },
+              ),
+          }
+      )
   ```
 
-- **重启udev服务**：保存规则文件后：
+  - Linux系统的USB端口绑定：[见此链接](https://github.com/box2ai-robotics/lerobot-joycon/blob/main/Double_tutorial.md)
 
-  ```bash
-  sudo udevadm control --reload-rules
-  sudo udevadm trigger
-  ```
-
-- **验证结果**：
-
-  ```bash
-  (base) lily@lilyhuang:~/code/xbot/lerobot$ ls -l /dev/ttyACM10 /dev/ttyACM11
-  lrwxrwxrwx 1 root root 7  4月 12 13:35 /dev/ttyACM10 -> ttyACM1
-  lrwxrwxrwx 1 root root 7  4月 12 13:35 /dev/ttyACM11 -> ttyACM2
-  ```
-
-- **自动给端口开权限**：在~/.bashrc或~/.zshrc中添加
-
-  ```bash
-  sudo chmod 777 /dev/ttyACM10  # leader
-  sudo chmod 777 /dev/ttyACM11  # follower
-  ```
-
-  重新打开终端，或source以下环境
 
 3. 列出并配置电机（以下测试在终端的python代码中运行即可）
 
@@ -326,8 +269,8 @@
   ```python
   from lerobot.common.robot_devices.motors.dynamixel import DynamixelMotorsBus
   
-  leader_port = "/dev/ttyACM10"  # 主，上面绑定的端口，通过该端口与机械臂通信。
-  follower_port = "/dev/ttyACM11"  # 从，上面绑定的端口
+  leader_port = "/dev/tty.usbmodem59700725591"  # 主，上面绑定的端口，通过该端口与机械臂通信。
+  follower_port = "/dev/tty.usbmodem59700727551"  # 从，上面绑定的端口
   
   # leader_arm 和 follower_arm 都是 DynamixelMotorsBus 类的实例，表示分别连接在 /dev/ttyACM10 和 /dev/ttyACM11 端口的主臂和从臂。
   leader_arm = DynamixelMotorsBus(
@@ -449,7 +392,7 @@
 
     gripper：夹爪电机
 
-- 每个点击的标定参数都包含以下内容：
+- 每个电机的标定参数都包含以下内容：
 
   - homing_offset (零点偏移)：
 
@@ -625,38 +568,39 @@
 
 1. 摄像头测试：
 
-- 运行以下代码`python find_camera_port.py`，找到摄像头的端口号，我使用的摄像头端口号是2和4：
+   - 运行以下代码`python find_camera_port.py`，找到摄像头的端口号，我MaCOS系统的摄像头端口号是0和1：
 
-  ```bash
-  (lerobot) lily@lilyhuang:~/code/xbot/lerobot$ python find_camera_port.py 
-  欢迎使用摄像头测试程序！
-  操作说明：请你将鼠标光标点击弹出图像然后按照下面提示切换摄像头
-    - 按 'n' 切换到下一个摄像头
-    - 按 'q' 随时退出程序
-  正在搜索可用摄像头...
-  
-  Linux detected. Finding available camera indices through scanning '/dev/video*' ports
-  Camera found at index /dev/video0
-  Camera found at index /dev/video2
-  Camera found at index /dev/video4
-  找到以下摄像头端口: [0, 2, 4]
-  共检测到 3 个摄像头，开始测试...
-  
-  
-  正在测试摄像头 0:
-    - 按 'n' 切换到下一个摄像头
-    - 按 'q' 退出程序
-  
-  正在测试摄像头 2:
-    - 按 'n' 切换到下一个摄像头
-    - 按 'q' 退出程序
-  
-  正在测试摄像头 4:
-    - 按 'n' 切换到下一个摄像头
-    - 按 'q' 退出程序
-  
-  所有摄像头测试完成或已退出
-  ```
+     ```bash
+     (lerobot) lily@lilyhuang:~/code/xbot/lerobot$ python find_camera_port.py 
+     欢迎使用摄像头测试程序！
+     操作说明：请你将鼠标光标点击弹出图像然后按照下面提示切换摄像头
+       - 按 'n' 切换到下一个摄像头
+       - 按 'q' 随时退出程序
+     正在搜索可用摄像头...
+     
+     Linux detected. Finding available camera indices through scanning '/dev/video*' ports
+     Camera found at index /dev/video0
+     Camera found at index /dev/video2
+     Camera found at index /dev/video4
+     找到以下摄像头端口: [0, 1, 2]
+     共检测到 3 个摄像头，开始测试...
+     
+     
+     正在测试摄像头 0:
+       - 按 'n' 切换到下一个摄像头
+       - 按 'q' 退出程序
+     
+     正在测试摄像头 1:
+       - 按 'n' 切换到下一个摄像头
+       - 按 'q' 退出程序
+     
+     正在测试摄像头 2:
+       - 按 'n' 切换到下一个摄像头
+       - 按 'q' 退出程序
+     
+     所有摄像头测试完成或已退出
+     ```
+
 
 - 调整摄像头的视角，基本达到如下范围：
 
@@ -691,39 +635,8 @@
       fps: 30
       width: 640
       height: 480
-    # wrist:
-    #   _target_: lerobot.common.robot_devices.cameras.opencv.OpenCVCamera
-    #   camera_index: 6
-    #   fps: 30
-    #   width: 640
-    #   height: 480
-    # front:
-    #   _target_: lerobot.common.robot_devices.cameras.opencv.OpenCVCamera
-    #   camera_index: 0
-    #   fps: 30
-    #   width: 640
-    #   height: 480
-    # side:
-    #   _target_: lerobot.common.robot_devices.cameras.opencv.OpenCVCamera
-    #   camera_index: /dev/video2
-    #   fps: 30
-    #   width: 640
-    #   height: 480       
-  
-    # top:
-    #   _target_: lerobot.common.robot_devices.cameras.opencv.OpenCVCamera
-    #   camera_index: /dev/video4
-    #   fps: 30
-    #   width: 640
-    #   height: 480
-    # wrist:
-    #   _target_: lerobot.common.robot_devices.cameras.opencv.OpenCVCamera
-    #   camera_index: 6
-    #   fps: 30
-    #   width: 640
-    #   height: 480
   ```
-
+  
 - 注：如果出现摄像头端口频繁改变的问题，可以按照前面机械臂的端口号映射到固定端口号方法，没有这个现象则不用，也可以每次检查，发现有变化，在`lerobot/configs/robot/koch.yaml`重新配置，MacOS系统默认最后一个是内置摄像头，所以是不变的。
 
 2. 摄像头数据获取：
@@ -773,7 +686,7 @@
       --force-override 0                             # 采集数据是否覆盖之前的数据；
   ```
 
-- lerobot官方的数据集[pushts]()数据集：
+- lerobot官方的数据集[pushts]()数据集V2版本：
 
   ```bash
   ── data
@@ -798,7 +711,7 @@
   
   ```
 
-- 我生成数据集：
+- 我生成数据集V1版本：
 
   ```
   └── koch_clip_clay_bowl
@@ -821,8 +734,6 @@
           ├── observation.images.laptop_episode_000001.mp4
           ├── observation.images.laptop_episode_000002.mp4
   ```
-
-- 此时生成的数据集是原始的数据集，可以让`cursor`写一个脚本转换为hugging face的标准数据集
 
 - rerun.io展示数据集：
 
@@ -862,13 +773,13 @@
    wandb.enable=false 
    ```
 
-2. 我选自用云端训练：[AutoDL](https://autodl.com/home)，也可以用[SiliconFlow](https://siliconflow.cn/zh-cn/)硅基流动，训练过程如下：
+2. 我选自用云端训练：[AutoDL](https://autodl.com/home)，训练过程如下：
 
 - AutoDL，登陆可以看官方文档，我使用的是ssh登陆。
-  - 我选择RTX 4090 / 24 GB，以ssh的模式登陆AutoDL，
+  - 我选择RTX 3090 / 24 GB，以ssh的模式登陆AutoDL，
   - 上传xbot整个包，包含采集的数据；
   - 在ssh链接的terminal端配置环境，和本地配置环境一样；
-  - 主要训练参数Steps = 200000，batch_size = 32，训练时间共计35h+；
+  - 主要训练参数Steps = 300000，batch_size = 32，训练时间共计22h+；
 
 - 创建wandb API key：***
 
@@ -918,6 +829,8 @@
   hydra.job.name=act_koch_test \
   device=cpu  \
   wandb.enable=true # 有可能会报错，wandb的tag太长，需要修改logger.py
+  
+  python lerobot/scripts/train.py dataset_repo_id=/root/autodl-tmp/xbot/lerobot/data/Lily-Huang/koch_clip_clay_bowl env=koch_real policy=act_koch_real hydra.run.dir=outputs/train/koch_clip_clay_bowl hydra.job.name=act_koch_test device=cuda training.num_workers=8 wandb.enable=false
   ```
 
 - wandb会根据dataset_repo_id生成tag，wandb的tag长度`between 1 and 64 characters`，`dataset_repo_id`不能相对路径，不然`hydra`会导致报错，需要修改wandb.init( )代码，为了折中，命令前加上`WANDB_MODE=offline`，训练完毕后wandb的相关log会保存在`   outputs/train/koch_clip_clay_bowl/wandb/`，然后手动上传wandb：（⚠️注：此处建议修改源代码logger.py，wandb offline后还是会报错，tag过长，应该是在二进制
@@ -1019,7 +932,16 @@
 
   📺 **项目结果演示视频**
 
-  [![Watch the video](assets/demo-thumbnail.jpg)](https://www.youtube.com/watch?v=390EQSu6ihM)
+  <div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
+    <div style="text-align: center;">
+      <div><strong>ACT-single-object</strong></div>
+      <img src="assets/single_object_ACT-ezgif.com-video-to-gif-converter.gif"/>
+    </div>
+    <div style="text-align: center;">
+      <div><strong>ACT-multi-objects</strong></div>
+      <img src="assets/multi_obj_ACT-ezgif.com-video-to-gif-converter.gif"/>
+    </div>
+  </div>
 
 - 实时推理(Inference)过程评估
 
