@@ -48,20 +48,21 @@
 - [摄像头数据获取与检验](lerobot-koch-ACT.md#摄像头数据获取与检验)
 - [遥操作数据采集](lerobot-koch-ACT.md#遥操作数据采集)
 - [ACT训练和推理完整流程](lerobot-koch-ACT.md#act训练和推理完整流程)
-- [ACT原理算法流程介绍](lerobot-koch-ACT.md#act原理算法流程介绍)assets/single_object_ACT-ezgif.com-video-to-gif-converter.gif
+- [ACT原理算法流程介绍](lerobot-koch-ACT.md#act原理算法流程介绍)
 
 ### 📺 ACT结果演示
 
-<div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
-  <div style="text-align: center;">
-    <div><strong>ACT-single-object</strong></div>
-    <img src="assets/single_object_ACT-ezgif.com-video-to-gif-converter.gif"/>
-  </div>
-  <div style="text-align: center;">
-    <div><strong>ACT-multi-objects</strong></div>
-    <img src="assets/multi_obj_ACT-ezgif.com-video-to-gif-converter.gif"/>
-  </div>
-</div>
+<table>
+  <tr>
+    <td><strong>ACT-single-object</strong></td>
+    <td><strong>ACT-multi-objects</strong></td>
+  </tr>
+  <tr>
+    <td><img src="assets/single_object_ACT-ezgif.com-video-to-gif-converter.gif"/></td>
+    <td><img src="assets/multi_obj_ACT-ezgif.com-video-to-gif-converter.gif"/></td>
+  </tr>
+</table>
+
 
 ## 📄 [Diffusion Policy 训练](lerobot-koch-DP.md)
 
@@ -73,12 +74,15 @@
 
 ### 📺 DP结果演示
 
-<div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
-  <div style="text-align: center;">
-    <div><strong>DP-multi-objects: 和 ACT 比较，可以捕捉 “如果需要把盒子夹近一些” 这个动作</strong></div>
-    <img src="assets/multi_obj_DP-ezgif.com-video-to-gif-converter.gif" width="1000" />
-  </div>
-</div>
+<table>
+  <tr>
+    <td style="text-align: center;">
+      <strong>DP-multi-objects: 和 ACT 比较，可以捕捉 “如果需要把盒子夹近一些” 这个动作</strong><br>
+      <img src="assets/multi_obj_DP-ezgif.com-video-to-gif-converter.gif" />
+    </td>
+  </tr>
+</table>
+
 
 
 ## 📄 [Lerobot Pi0 训练](lerobot-koch-Pi.md)

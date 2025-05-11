@@ -932,16 +932,16 @@
 
   📺 **项目结果演示视频**
 
-  <div style="display: flex; justify-content: space-around; align-items: center; gap: 20px;">
-    <div style="text-align: center;">
-      <div><strong>ACT-single-object</strong></div>
-      <img src="assets/single_object_ACT-ezgif.com-video-to-gif-converter.gif"/>
-    </div>
-    <div style="text-align: center;">
-      <div><strong>ACT-multi-objects</strong></div>
-      <img src="assets/multi_obj_ACT-ezgif.com-video-to-gif-converter.gif"/>
-    </div>
-  </div>
+  <table>
+    <tr>
+      <td><strong>ACT-single-object</strong></td>
+      <td><strong>ACT-multi-objects</strong></td>
+    </tr>
+    <tr>
+      <td><img src="assets/single_object_ACT-ezgif.com-video-to-gif-converter.gif"/></td>
+      <td><img src="assets/multi_obj_ACT-ezgif.com-video-to-gif-converter.gif"/></td>
+    </tr>
+  </table>
 
 - 实时推理(Inference)过程评估
 
