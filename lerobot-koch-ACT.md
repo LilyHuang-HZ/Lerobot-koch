@@ -938,8 +938,8 @@
       <td><strong>ACT-multi-objects</strong></td>
     </tr>
     <tr>
-      <td><img src="assets/single_object_ACT-ezgif.com-video-to-gif-converter.gif"/></td>
-      <td><img src="assets/multi_obj_ACT-ezgif.com-video-to-gif-converter.gif"/></td>
+      <td><img src="assets/single_object_ACT-ezgif.com-optimize.gif"/></td>
+      <td><img src="assets/multi_obj_ACT-ezgif.com-optimize.gif"/></td>
     </tr>
   </table>
 

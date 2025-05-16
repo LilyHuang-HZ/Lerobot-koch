@@ -58,10 +58,11 @@
     <td><strong>ACT-multi-objects</strong></td>
   </tr>
   <tr>
-    <td><img src="assets/single_object_ACT-ezgif.com-video-to-gif-converter.gif"/></td>
-    <td><img src="assets/multi_obj_ACT-ezgif.com-video-to-gif-converter.gif"/></td>
+    <td><img src="assets/single_object_ACT-ezgif.com-optimize.gif"/></td>
+    <td><img src="assets/multi_obj_ACT-ezgif.com-optimize.gif"/></td>
   </tr>
 </table>
+
 
 
 ## 📄 [Diffusion Policy 训练](lerobot-koch-DP.md)
@@ -78,10 +79,11 @@
   <tr>
     <td style="text-align: center;">
       <strong>DP-multi-objects: 和 ACT 比较，可以捕捉 “如果需要把盒子夹近一些” 这个动作</strong><br>
-      <img src="assets/multi_obj_DP-ezgif.com-video-to-gif-converter.gif" />
+      <img src="assets/multi_obj_DP-ezgif.com-optimize.gif" />
     </td>
   </tr>
 </table>
+
 
 
 

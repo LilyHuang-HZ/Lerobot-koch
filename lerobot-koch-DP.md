@@ -226,9 +226,14 @@ python lerobot/scripts/control_robot_llm.py inference --robot-path lerobot/confi
 
 📺 **项目结果演示视频**
 
-![multi_obj_DP-ezgif.com-video-to-gif-converter](assets/multi_obj_DP-ezgif.com-video-to-gif-converter.gif)
-
-
+<table>
+  <tr>
+    <td style="text-align: center;">
+      <strong>DP-multi-objects: 和 ACT 比较，可以捕捉 “如果需要把盒子夹近一些” 这个动作</strong><br>
+      <img src="assets/multi_obj_DP-ezgif.com-optimize.gif" />
+    </td>
+  </tr>
+</table>
 
 2. 定性的性能分析
 
